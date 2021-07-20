@@ -1,53 +1,56 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'dart:async';
+import 'dart:io';
 
-import 'package:webview_flutter/webview_flutter.dart';
+import 'package:flutter_html_to_pdf/flutter_html_to_pdf.dart';
+
+import 'package:flutter_full_pdf_viewer/flutter_full_pdf_viewer.dart';
+import 'package:path_provider/path_provider.dart';
 
 class LoadviewHtml extends StatefulWidget {
-
-
   @override
-  _LoadviewHtmlState createState(){
+  _LoadviewHtmlState createState() {
     return _LoadviewHtmlState();
-
   }
 }
 
 class _LoadviewHtmlState extends State<LoadviewHtml> {
-  WebViewController _controller;
+  String generatedPdfFilePath;
+  @override
+  void initState() {
+    super.initState();
+    generateExampleDocument();
+  }
+
+  Future<void> generateExampleDocument() async {
+    final htmlContent = "files/test.html";
+    Directory appDocDir = await getApplicationDocumentsDirectory();
+    final targetPath = appDocDir.path;
+    final targetFileName = "example-pdf";
+
+    final generatedPdfFile = await FlutterHtmlToPdf.convertFromHtmlContent(
+        htmlContent, targetPath, targetFileName);
+    generatedPdfFilePath = generatedPdfFile.path;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
-      appBar: AppBar(
-
-        title: Text('Loadview HTML'),
-        centerTitle: true,
-      ),
-    body: WebView(
-      javascriptMode: JavascriptMode.unrestricted,
-      initialUrl: '',
-      onWebViewCreated: (WebViewController webViewController){
-        _controller = webViewController;
-        _loadHtmlFromAssets();
-      },
-    ),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
-        onPressed: (){
-          _controller.evaluateJavascript('value("Seema S", "seemasenthil399@gmail.com", "03-08-1999")');
-        },
+      appBar: AppBar(),
+      body: Center(
+        child: ElevatedButton(
+          child: Text("view PDF"),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => PDFViewerScaffold(
+                      appBar: AppBar(title: Text("Generated PDF Document")),
+                      path: generatedPdfFilePath)),
+            );
+          },
+        ),
       ),
     );
-  }
-  _loadHtmlFromAssets() async {
-    String fileText = await rootBundle.loadString('assets/files/test.html');
-        _controller.loadUrl(UriData.fromString(
-          fileText,
-          mimeType: 'text/html',
-          encoding: Encoding.getByName('utf-8')
-        ).toString());
   }
 }
