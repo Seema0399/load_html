@@ -23,7 +23,41 @@ class _LoadviewHtmlState extends State<LoadviewHtml> {
   }
 
   Future<void> generateExampleDocument() async {
-    final htmlContent = "files/test.html";
+    final htmlContent = """
+    <!DOCTYPE html>
+    <html>
+<head></head>
+    <script>
+    function value(val1,val2,val3){
+    var str1 = document.getElementById("string1")
+    str1.innerHTML = val1;
+    var str2 = document.getElementById("string2")
+    str2.innerHTML = val2;
+    var str3 = document.getElementById("string3")
+    str3.innerHTML = val3;
+
+    };
+    </script>
+
+    <body>
+    <center>
+        <h1> User Information </h1></center>
+    <p class ="p1"><span class = "s1">Name:Seema S</span><span id="string1"></span></p>
+    <p class ="p2"><span class ="s1"></span></p>
+    <p class ="p1"><span class ="s1">Email:seeamsenthil399@gmail.com</span><span id="string2"></span></p>
+    <p class ="p2"><span class ="s1"></span></p>
+    <p class ="p1"><span class ="s1">Gender:Female</span>&nbsp;<span id="string3"></span></p>
+   
+
+
+    <p class="p2"><span class="s1"></span></p>
+    <p class="p1"><span class="s1"><span class="Apple-converted-space"> </span></span><br></p>
+    <p id="string4">
+    <p class="p2"><span class="s1"></span><br></p>
+    </body>
+
+</html>
+""";
     Directory appDocDir = await getApplicationDocumentsDirectory();
     final targetPath = appDocDir.path;
     final targetFileName = "example-pdf";
@@ -36,7 +70,10 @@ class _LoadviewHtmlState extends State<LoadviewHtml> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        title: Text('Html to PDF'),
+        centerTitle: true,
+      ),
       body: Center(
         child: ElevatedButton(
           child: Text("view PDF"),
